@@ -76,3 +76,11 @@ npm run preview
   - Action Toolbar: `Full Screen for Doctor`, `Copy Text (WhatsApp)`, `Print / Save PDF`
 - **Legal & Safety Footer**:
   > *CareSlip is a personal bedside notepad for caregivers. It does not store medical records on any server and does not provide clinical diagnosis, medical evaluation, or treatment advice.*
+
+---
+
+## 🤝 Contributing
+
+CareSlip is currently maintained as a personal project for dedicated bedside caregiving. We are not actively accepting external pull requests or code contributions at this stage. 
+
+Thank you very much for your interest and support!
