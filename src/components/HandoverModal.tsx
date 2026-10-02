@@ -177,6 +177,14 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
         pixelRatio: 2,
         cacheBust: true,
         height: scrollHeight,
+        filter: (node) => {
+          if (node instanceof Element) {
+            if (node.classList?.contains('no-export') || node.classList?.contains('no-print')) {
+              return false;
+            }
+          }
+          return true;
+        },
         style: {
           height: `${scrollHeight}px`,
           maxHeight: 'none',
@@ -374,21 +382,21 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
                     setEditingReplyId(entry.id);
                     setEditingReplyText(entry.doctorReply || '');
                   }}
-                  className="p-1 text-slate-400 hover:text-emerald-700 hover:bg-emerald-100 rounded transition-colors cursor-pointer shrink-0"
+                  className="p-1 text-slate-400 hover:text-emerald-700 hover:bg-emerald-100 rounded transition-colors cursor-pointer shrink-0 no-export no-print"
                   title="Edit Doctor's Reply"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
-              <div className="mt-1.5">
+              <div className="mt-1.5 no-export no-print">
                 <button
                   type="button"
                   onClick={() => {
                     setEditingReplyId(entry.id);
                     setEditingReplyText('');
                   }}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 hover:underline cursor-pointer py-0.5"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 hover:underline cursor-pointer py-0.5 whitespace-nowrap"
                 >
                   <Plus className="w-3 h-3" />
                   <span>Add Doctor's Reply</span>
@@ -626,52 +634,52 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
         </div>
 
         {/* Paper-Style Clinical Content (Scrollable & Captured for JPG) */}
-        <div ref={slipRef} className="overflow-y-auto p-4 sm:p-7 space-y-5 sm:space-y-6 bg-white print-card">
+        <div ref={slipRef} className="overflow-y-auto p-4 sm:p-7 space-y-5 sm:space-y-6 bg-white print-card min-w-[320px]">
           {/* Paper Header — Concise Brand Badge, Prominent Date & Time Window */}
           <div className="border-b-2 border-slate-900 pb-3.5 sm:pb-4">
             {/* Top row: Brand Badge & Time Window Pill */}
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-base font-black tracking-tighter text-slate-950 font-sans select-none">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 mb-2.5 border-b border-slate-100">
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-lg font-black tracking-tight text-slate-950 font-sans select-none">
                   Care<span className="text-emerald-600">Slip</span>
                 </span>
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
-                  • Bedside Handover
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md whitespace-nowrap">
+                  Bedside Handover
                 </span>
               </div>
 
               {/* Time Window (prominent at the top) */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-900 text-xs font-mono-num font-bold rounded-lg border border-slate-200 shadow-2xs">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-900 text-xs font-mono-num font-bold rounded-lg border border-slate-200 shadow-2xs shrink-0 whitespace-nowrap">
                 <Clock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span>{timeWindowText}</span>
               </div>
             </div>
 
             {/* Main Hero: Large Date Headline */}
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight">
+            <div className="flex flex-wrap items-start justify-between gap-2 mt-1">
+              <div className="space-y-1">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight leading-snug">
                   {dateHeadline}
                 </h1>
-                <div className="text-xs text-slate-600 mt-0.5 flex flex-wrap items-center gap-1.5">
+                <div className="text-xs text-slate-600 flex flex-wrap items-center gap-1.5 leading-normal">
                   <span className="font-semibold text-slate-700">
                     {headlineSubtitle}
                   </span>
                   {selectedTheme !== 'all' && (
-                    <span className="font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300 text-[10px] uppercase tracking-wide">
+                    <span className="font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300 text-[10px] uppercase tracking-wide whitespace-nowrap">
                       Filtered: {selectedTheme}
                     </span>
                   )}
                   {selectedDate !== 'all' && (
-                    <span className="font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300 text-[10px] uppercase tracking-wide">
+                    <span className="font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300 text-[10px] uppercase tracking-wide whitespace-nowrap">
                       Date: {activeDateGroup?.displayDate}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="text-left sm:text-right mt-0.5 sm:mt-0 shrink-0">
-                <span className="inline-block px-2 py-0.5 bg-slate-900 text-white font-mono-num font-bold text-xs rounded-md shadow-2xs">
+              <div className="shrink-0 mt-0.5">
+                <span className="inline-block px-2.5 py-1 bg-slate-900 text-white font-mono-num font-bold text-xs rounded-md shadow-2xs whitespace-nowrap">
                   {selectedTheme === 'all'
                     ? `${totalLogs} Recorded Events`
                     : `${
@@ -682,17 +690,7 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
                           : selectedTheme === 'medication'
                           ? currentSummary.medications.length
                           : currentSummary.questionsForDoctor.length
-                      } ${
-                        (selectedTheme === 'symptom'
-                          ? currentSummary.vitalsAndSymptoms.length
-                          : selectedTheme === 'intake_output'
-                          ? currentSummary.intakeAndOutput.length
-                          : selectedTheme === 'medication'
-                          ? currentSummary.medications.length
-                          : currentSummary.questionsForDoctor.length) === 1
-                          ? 'Event'
-                          : 'Events'
-                      } (${
+                      } Events (${
                         selectedTheme === 'symptom'
                           ? 'Vitals'
                           : selectedTheme === 'intake_output'
@@ -706,23 +704,24 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
             </div>
 
             {/* Patient Meta Strip */}
-            <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5">
-              <div className="flex items-center gap-1.5">
+            <div className="mt-3.5 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5">
+              <div className="flex items-center gap-1.5 shrink-0">
                 <User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span className="text-slate-500">Patient:</span>
-                <span className="font-bold text-slate-900 truncate">
+                <span className="text-slate-500 font-medium">Patient:</span>
+                <span className="font-bold text-slate-900">
                   {patientInfo.patientName || 'Anonymous / Unassigned'}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-slate-500">Bed/Room:</span>
-                <span className="font-bold text-slate-900 truncate">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="text-slate-500 font-medium">Bed/Room:</span>
+                <span className="font-bold text-slate-900">
                   {patientInfo.roomBed || 'Not specified'}
                 </span>
               </div>
-              <div className="col-span-2 sm:col-span-1 flex items-center gap-1.5 font-mono-num">
-                <span className="text-slate-500">Physician:</span>
-                <span className="font-bold text-slate-900 truncate">
+              <div className="flex items-center gap-1.5 font-mono-num shrink-0">
+                <Stethoscope className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <span className="text-slate-500 font-medium">Physician:</span>
+                <span className="font-bold text-slate-900">
                   {patientInfo.attendingPhysician || 'Attending Physician'}
                 </span>
               </div>
@@ -735,11 +734,11 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
             {(selectedTheme === 'all' || selectedTheme === 'symptom') && (
               <section className="print-section">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-2.5">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                    <span className="text-base">⚠️</span>
-                    <span>Vitals &amp; Acute Observations</span>
+                  <h3 className="text-xs sm:text-sm font-bold tracking-wide text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="text-base shrink-0">⚠️</span>
+                    <span className="uppercase">Vitals &amp; Acute Observations</span>
                   </h3>
-                  <span className="text-xs font-mono-num font-semibold text-slate-500">
+                  <span className="text-xs font-mono-num font-semibold text-slate-500 shrink-0">
                     ({currentSummary.vitalsAndSymptoms.length})
                   </span>
                 </div>
@@ -751,11 +750,11 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
             {(selectedTheme === 'all' || selectedTheme === 'intake_output') && (
               <section className="print-section">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-2.5">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                    <span className="text-base">💧</span>
-                    <span>Intake, Nutrition &amp; Output</span>
+                  <h3 className="text-xs sm:text-sm font-bold tracking-wide text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="text-base shrink-0">💧</span>
+                    <span className="uppercase">Intake, Nutrition &amp; Output</span>
                   </h3>
-                  <span className="text-xs font-mono-num font-semibold text-slate-500">
+                  <span className="text-xs font-mono-num font-semibold text-slate-500 shrink-0">
                     ({currentSummary.intakeAndOutput.length})
                   </span>
                 </div>
@@ -767,11 +766,11 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
             {(selectedTheme === 'all' || selectedTheme === 'medication') && (
               <section className="print-section">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-2.5">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                    <span className="text-base">💊</span>
-                    <span>Medications &amp; Timelines</span>
+                  <h3 className="text-xs sm:text-sm font-bold tracking-wide text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="text-base shrink-0">💊</span>
+                    <span className="uppercase">Medications &amp; Timelines</span>
                   </h3>
-                  <span className="text-xs font-mono-num font-semibold text-slate-500">
+                  <span className="text-xs font-mono-num font-semibold text-slate-500 shrink-0">
                     ({currentSummary.medications.length})
                   </span>
                 </div>
@@ -783,11 +782,11 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
             {(selectedTheme === 'all' || selectedTheme === 'question') && (
               <section className="print-section">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-2.5">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                    <span className="text-base">❓</span>
-                    <span>Questions from Caregiver</span>
+                  <h3 className="text-xs sm:text-sm font-bold tracking-wide text-slate-900 flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="text-base shrink-0">❓</span>
+                    <span className="uppercase">Questions from Caregiver</span>
                   </h3>
-                  <span className="text-xs font-mono-num font-semibold text-slate-500">
+                  <span className="text-xs font-mono-num font-semibold text-slate-500 shrink-0">
                     ({currentSummary.questionsForDoctor.length})
                   </span>
                 </div>
@@ -797,9 +796,9 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
           </div>
 
           {/* Paper Footer with Disclaimer */}
-          <div className="pt-4 border-t border-slate-200 text-[11px] text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-1 leading-tight">
-            <span>Generated locally via CareSlip bedside notepad</span>
-            <span>100% on-device • Zero cloud sync</span>
+          <div className="pt-4 border-t border-slate-200 text-[11px] text-slate-400 flex flex-wrap items-center justify-between gap-2 leading-normal">
+            <span className="whitespace-nowrap">Generated locally via CareSlip bedside notepad</span>
+            <span className="whitespace-nowrap">100% on-device • Zero cloud sync</span>
           </div>
         </div>
 
