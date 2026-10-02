@@ -155,6 +155,8 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
   const handleSaveJpg = async () => {
     if (!slipRef.current) return;
     setIsGeneratingJpg(true);
+    // Allow state to flush so any no-export elements are cleanly omitted by React
+    await new Promise((r) => setTimeout(r, 80));
     try {
       if (editingReplyId) {
         if (editingReplyText.trim()) {
@@ -388,7 +390,7 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-            ) : (
+            ) : !isGeneratingJpg ? (
               <div className="mt-1.5 no-export no-print">
                 <button
                   type="button"
@@ -402,7 +404,7 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
                   <span>Add Doctor's Reply</span>
                 </button>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </li>
@@ -656,30 +658,12 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
             </div>
 
             {/* Main Hero: Large Date Headline */}
-            <div className="flex flex-wrap items-start justify-between gap-2 mt-1">
-              <div className="space-y-1">
-                <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight leading-snug">
+            <div className="mt-1 space-y-1">
+              <div className="flex items-center justify-between gap-2">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight leading-tight">
                   {dateHeadline}
                 </h1>
-                <div className="text-xs text-slate-600 flex flex-wrap items-center gap-1.5 leading-normal">
-                  <span className="font-semibold text-slate-700">
-                    {headlineSubtitle}
-                  </span>
-                  {selectedTheme !== 'all' && (
-                    <span className="font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300 text-[10px] uppercase tracking-wide whitespace-nowrap">
-                      Filtered: {selectedTheme}
-                    </span>
-                  )}
-                  {selectedDate !== 'all' && (
-                    <span className="font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300 text-[10px] uppercase tracking-wide whitespace-nowrap">
-                      Date: {activeDateGroup?.displayDate}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="shrink-0 mt-0.5">
-                <span className="inline-block px-2.5 py-1 bg-slate-900 text-white font-mono-num font-bold text-xs rounded-md shadow-2xs whitespace-nowrap">
+                <span className="inline-block px-2.5 py-1 bg-slate-900 text-white font-mono-num font-bold text-xs rounded-md shadow-2xs whitespace-nowrap shrink-0">
                   {selectedTheme === 'all'
                     ? `${totalLogs} Recorded Events`
                     : `${
@@ -701,27 +685,48 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
                       })`}
                 </span>
               </div>
+
+              <div className="text-xs text-slate-600 flex flex-wrap items-center gap-1.5 leading-normal">
+                <span className="font-semibold text-slate-700">
+                  {headlineSubtitle}
+                </span>
+                {selectedTheme !== 'all' && (
+                  <span className="font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300 text-[10px] uppercase tracking-wide whitespace-nowrap">
+                    Filtered: {selectedTheme}
+                  </span>
+                )}
+                {selectedDate !== 'all' && (
+                  <span className="font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300 text-[10px] uppercase tracking-wide whitespace-nowrap">
+                    Date: {activeDateGroup?.displayDate}
+                  </span>
+                )}
+              </div>
             </div>
 
-            {/* Patient Meta Strip */}
-            <div className="mt-3.5 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5">
-              <div className="flex items-center gap-1.5 shrink-0">
-                <User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span className="text-slate-500 font-medium">Patient:</span>
-                <span className="font-bold text-slate-900">
-                  {patientInfo.patientName || 'Anonymous / Unassigned'}
-                </span>
+            {/* Patient Meta Strip — Structured 2-row layout with zero overlap */}
+            <div className="mt-3.5 bg-slate-50/95 border border-slate-200 rounded-xl p-3 text-xs space-y-2">
+              {/* Row 1: Patient Name & Bed/Room */}
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <span className="text-slate-500 font-medium shrink-0">Patient:</span>
+                  <span className="font-bold text-slate-900 whitespace-nowrap truncate">
+                    {patientInfo.patientName || 'Anonymous / Unassigned'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 min-w-0 text-right">
+                  <span className="text-slate-500 font-medium shrink-0">Bed/Room:</span>
+                  <span className="font-bold text-slate-900 whitespace-nowrap truncate">
+                    {patientInfo.roomBed || 'Not specified'}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <span className="text-slate-500 font-medium">Bed/Room:</span>
-                <span className="font-bold text-slate-900">
-                  {patientInfo.roomBed || 'Not specified'}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 font-mono-num shrink-0">
+
+              {/* Row 2: Attending Physician */}
+              <div className="pt-2 border-t border-slate-200/80 flex items-center gap-1.5 font-mono-num">
                 <Stethoscope className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <span className="text-slate-500 font-medium">Physician:</span>
-                <span className="font-bold text-slate-900">
+                <span className="text-slate-500 font-medium shrink-0">Physician:</span>
+                <span className="font-bold text-slate-900 whitespace-nowrap truncate">
                   {patientInfo.attendingPhysician || 'Attending Physician'}
                 </span>
               </div>
