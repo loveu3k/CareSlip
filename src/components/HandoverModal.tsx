@@ -15,6 +15,7 @@ import {
   Check,
   Edit2,
   Calendar,
+  Printer,
 } from 'lucide-react';
 import { toJpeg } from 'html-to-image';
 import type { HandoverSummary, PatientInfo, CareLogEntry, Category } from '../types';
@@ -457,7 +458,7 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
     <div
       className={`fixed inset-0 z-70 flex items-center justify-center p-2 sm:p-4 transition-all duration-200 ${
         isFlashMode ? 'bg-black/90' : 'bg-slate-900/60 backdrop-blur-xs'
-      }`}
+      } print:static print:inset-auto print:p-0 print:bg-white print:z-auto print:block`}
     >
       {/* Modal Dialog Card */}
       <div
@@ -465,10 +466,10 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
           isFlashMode
             ? 'max-w-4xl h-[95vh] bg-white text-black p-6 sm:p-8 rounded-2xl shadow-2xl border-4 border-slate-900 overflow-y-auto'
             : 'max-w-2xl max-h-[92vh] bg-white rounded-2xl shadow-2xl border border-slate-300 overflow-hidden'
-        } print-container`}
+        } print-container print:border-none print:shadow-none print:max-w-none print:w-full print:h-auto print:max-h-none print:overflow-visible print:p-0`}
       >
         {/* Action Toolbar */}
-        <div className="bg-slate-900 text-white px-3 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2 border-b border-slate-800 shrink-0">
+        <div className="bg-slate-900 text-white px-3 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2 border-b border-slate-800 shrink-0 no-print">
           <div className="flex items-center gap-2 min-w-0">
             <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse"></span>
             <span className="text-xs font-black tracking-tighter text-white font-sans shrink-0">
@@ -506,7 +507,19 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
               <span className="sm:hidden">Copy</span>
             </button>
 
-            {/* Save as JPG Image Button (No printer icon, clean image export) */}
+            {/* Print / Save PDF Button */}
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer border border-slate-700 active:scale-95"
+              title="Print Handover Slip or Save as PDF"
+            >
+              <Printer className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden sm:inline">Print / PDF</span>
+              <span className="sm:hidden">PDF</span>
+            </button>
+
+            {/* Save as JPG Image Button */}
             <button
               onClick={handleSaveJpg}
               disabled={isGeneratingJpg}
@@ -532,7 +545,7 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
 
         {/* Date Filter Bar (Shown when observations span across multiple calendar days) */}
         {availableDateGroups.length > 1 && (
-          <div className="bg-slate-200/90 border-b border-slate-300 px-3 py-1.5 sm:px-5 sm:py-1.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs shrink-0">
+          <div className="bg-slate-200/90 border-b border-slate-300 px-3 py-1.5 sm:px-5 sm:py-1.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs shrink-0 no-print">
             <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider shrink-0 flex items-center gap-1 mr-1">
               <Calendar className="w-3.5 h-3.5 text-emerald-700" />
               Date:
@@ -570,7 +583,7 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
         )}
 
         {/* Theme Filter Bar (Click any theme to view ONLY that theme's notes) */}
-        <div className="bg-slate-100 border-b border-slate-200 px-3 py-2 sm:px-5 sm:py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs shrink-0">
+        <div className="bg-slate-100 border-b border-slate-200 px-3 py-2 sm:px-5 sm:py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs shrink-0 no-print">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1">
             Filter:
           </span>
@@ -808,7 +821,7 @@ export const HandoverModal: React.FC<HandoverModalProps> = ({
         </div>
 
         {/* Modal Bottom Bar */}
-        <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+        <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0 no-print">
           <span className="text-xs text-slate-500">
             Tap <strong className="text-slate-700">Export JPG</strong> to save image to photos.
           </span>

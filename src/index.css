@@ -87,8 +87,11 @@ body {
     border: 1.5pt solid #0f172a !important;
     box-shadow: none !important;
     padding: 18pt !important;
-    page-break-inside: avoid;
-    break-inside: avoid;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    page-break-inside: auto;
+    break-inside: auto;
   }
 
   .print-section {
